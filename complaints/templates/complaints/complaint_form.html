@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ApnaBhidu - Submit Complaint</title>
+</head>
+
+<body>
+
+    <h1>ApnaBhidu</h1>
+
+    <h2>Submit Your Complaint</h2>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            Submit Complaint
+        </button>
+
+    </form>
+
+</body>
+</html>
+
+<!-- 
+
+{{ form.as_p }} Django automatically renders your form fields inside paragraph elements.
+
+You don't have to manually write HTML inputs for every model field.
+
+{% csrf_token %} A Django template tag that adds a CSRF token to protect against Cross-Site Request Forgery attacks
+
+-->
