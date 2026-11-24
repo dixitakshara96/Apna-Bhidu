@@ -36,15 +36,24 @@ def create_complaint(request):
         # Renders an HTML template with context
         return render(request,'complaints/complaint_form.html', {'form' : form})
 
-
+# ab yaha humne function banaya hai jisse hum saari complaints dekh rhe hai 
 def complaint_list(request) :
+    # this will return all complaints and assign it to complaint variable
     complaints = Complaint.objects.all()
 
+    # here , we are rendering to the complaint_list.html (aur render() ke 3 parameter hote hai)
     return render(request, 'complaints/complaint_list.html', { 'complaints' : complaints})
 
+# yaha hum ek record ko fetch kar rhe hai request GET hai pk is path parameter 
+# konsi complaint chahiye wo pk se milegi
 def complaint_details(request, pk) :
+    # Complaint.objects.get(pk=pk) bhi use kar skte the kyun nhi kiya iska reason hai 
+    # isiliye nhi kiya kyunki it will return ComplainNotFound if no record is found that will give 500 (internal server error)
+    # so we use get_object_or_404(Model, pk=pk) , if record not found it will return 404 Not Found status code
+    # also error aaya tha ek kyunki parameter galat daal diya tha mene get_object_or_404() ka
     complaint = get_object_or_404(Complaint, pk=pk)
 
+    # simply rendering the templates jaha details dekh sakte hai specific complaint ki
     return render(request, 'complaints/complaint_details.html', {'complaint':complaint})
 
 
