@@ -10,7 +10,7 @@ class ComplaintForm(forms.ModelForm) :
     class Meta :
         model = Complaint # this line specifies which model this form is connected to
         #fields: Specifies which model fields should appear in the form.
-        fields = ['title', 'description', 'category'] 
+        fields = ['title', 'description', 'category', 'student',] 
 
 
 

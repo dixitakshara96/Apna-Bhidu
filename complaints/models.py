@@ -2,6 +2,7 @@
 
 # Django ke model fields aur Model base class ko import kar rahe hain.
 from django.db import models
+from accounts.models import Students
 
 
 class Complaint(models.Model):
@@ -43,6 +44,15 @@ class Complaint(models.Model):
         default=Status.OPEN,
     )
 
+    # Complaint kis student ne create ki hai
+    # null=True isliye use kar rahe hai kyunki purane complaints ke liye
+    # abhi student record available nahi ho sakta.
+    student = models.ForeignKey(
+        Students,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     # Record create hone ka date/time Django automatically set karega.
     created_at = models.DateTimeField(auto_now_add=True)
 

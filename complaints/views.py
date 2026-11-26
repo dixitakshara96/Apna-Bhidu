@@ -4,15 +4,24 @@ from django.http import HttpResponse
 # same subfolder se forms.py se ComplaintForm class import kar rhe hai
 from .forms import ComplaintForm
 
-
+from django.views.decorators.csrf import csrf_exempt
 from .models import Complaint
 
+
+# STATUS = ['OPEN','CLOSED','IN_PROGRESS','RESOLVED']
+# TRANSITIONS_ALLOWED = {
+#     'OPEN' : ['IN_PROGRESS'],
+#     'IN_PROGRESS' : ['RESOLVED'],
+#     'RESOLVED' : ['IN_PROGRESS','CLOSED'],
+#     'CLOSED' : []
+# }
 # Create your views here.
 
 def home(response) :
     return render(response, 'home.html')
 
 # function banaya hai parameter client request hai
+@csrf_exempt
 def create_complaint(request):
 
     # agar request ka method POST hai (mtlb create karna hai kuch)
@@ -22,19 +31,19 @@ def create_complaint(request):
         form = ComplaintForm(request.POST) 
 
         # check karo jo form banaya hai wo valid hai, saari fields sahi hai if yes toh save karlo
-        if form.is_valid() :
+        if form.is_valid():
             # form.save() works here because we are using ModelForm, not an ordinary Form
             form.save()
             # aur batado ki submit hogya hai
             return redirect("complaint_list")
 
     # if request ka method POST nhi hai toh
-    else :
+    else:
         # blank form create karo aur wahi return kardo
-        form = ComplaintForm
+        form = ComplaintForm()
 
         # Renders an HTML template with context
-        return render(request,'complaints/complaint_form.html', {'form' : form})
+        return render(request,"complaints/complaint_form.html", {"form" : form})
 
 # ab yaha humne function banaya hai jisse hum saari complaints dekh rhe hai 
 def complaint_list(request) :
