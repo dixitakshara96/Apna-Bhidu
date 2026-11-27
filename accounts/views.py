@@ -13,10 +13,20 @@ from complaints.models import Complaint
 from .forms import StudentsForm, MentorForm
 
 
+
+
+
+def login(request):
+    return HttpResponse("this is for login")
+
+def signup(request):
+    return HttpResponse('this is for signup')
+
+def logout(request):
+    return HtpResponse("this is for logout")
 # csrf_exempt ka matlab hai is view par CSRF check temporarily skip karna.
 # Postman se testing karte waqt CSRF token nahi hota, isliye yeh kaam aata hai.
 # Production mein ise avoid karke proper CSRF token use karna safer hota hai.
-
 @csrf_exempt
 def create_student(request):
     # request ek HttpRequest object hai jisme method aur user ka data hota hai.
