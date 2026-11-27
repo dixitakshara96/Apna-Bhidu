@@ -69,6 +69,8 @@ def create_mentor(request):
     return HttpResponse(form.errors.as_text(), status=400)
 
 
+
+
 @csrf_exempt
 def get_details(request, pk):
     # GET ka use data read/fetch karne ke liye hota hai.
@@ -99,7 +101,38 @@ def get_details(request, pk):
 
 
 @csrf_exempt
-def mentor_change_status(request, pk):
+def mentor_change_status(request, sk, ck, status):
     # Yeh function abhi sirf declare kiya gaya hai; status-change logic abhi likhna baaki hai.
     # pass ka matlab hai: function ko temporarily empty rakhna.
-    pass
+    if request.method != "PUT":
+        return JsonResponse({"error":"only put is allowed"}, status = 405)
+
+    else:
+        #/mentor//<sk>/<ck>/<status:str>/
+        # sk = student_id, ck = complaint_id, status = new_status
+        # students = Students.objects.filter(id = sk)
+
+        complaints_show_pre = Complaint.objects.filter(id = ck, student_id = sk).values(
+                "id",
+                "title",
+                "description",
+                "category",
+                "status",
+                "created_at",
+            )
+        list1 = list(complaints_show_pre)
+
+        complaints = Complaint.objects.filter(id = ck, student_id = sk)
+        complaints.update(status = status)
+
+        complaints_show_post = Complaint.objects.filter(id = ck, student_id = sk).values(
+                        "id",
+                        "title",
+                        "description",
+                        "category",
+                        "status",
+                        "created_at",
+        )
+        list2 = list(complaints_show_post)
+
+        return JsonResponse({"complaints_before": list1, "complaints_after": list2})
