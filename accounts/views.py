@@ -10,7 +10,7 @@ from .models import Students
 from complaints.models import Complaint
 
 # Forms user ka input validate karke model mein save karne mein help karte hai.
-from .forms import StudentsForm, MentorForm
+from .forms import SignupForm, LoginForm
 
 
 
@@ -23,60 +23,65 @@ def signup(request):
     return HttpResponse('this is for signup')
 
 def logout(request):
-    return HtpResponse("this is for logout")
+    return HttpResponse("this is for logout")
 # csrf_exempt ka matlab hai is view par CSRF check temporarily skip karna.
 # Postman se testing karte waqt CSRF token nahi hota, isliye yeh kaam aata hai.
 # Production mein ise avoid karke proper CSRF token use karna safer hota hai.
-@csrf_exempt
-def create_student(request):
-    # request ek HttpRequest object hai jisme method aur user ka data hota hai.
-    if request.method == "POST":
-        # POST body se student form bana rahe hai.
-        # POST ka use database mein naya record create karne ke liye hota hai.
-        form = StudentsForm(request.POST)
-
-        # Form ke fields aur model rules check kar rahe hai.
-        if form.is_valid():
-            # Valid form ko database mein save kar rahe hai.
-            form.save()
-
-            # Har Django view ko HttpResponse return karna zaroori hai.
-            return HttpResponse("form is saved")
-
-    else:
-        # GET request mein user ne abhi data submit nahi kiya,
-        # isliye empty form object bana rahe hai.
-        form = StudentsForm()
-
-        # Is project mein abhi HTML form ki jagah simple text response bhej rahe hai.
-        return HttpResponse("post was not there with the request")
-
-    # Agar POST form invalid ho, toh pehle function None return kar raha tha.
-    # Isi wajah se Django ka error aata hai:
-    # "The view did not return an HttpResponse object. It returned None instead."
-    # Form errors ko response mein dikha rahe hai.
-    return HttpResponse(form.errors.as_text(), status=400)
 
 
-@csrf_exempt
-def create_mentor(request):
-    # Mentor create karne ke liye POST request check kar rahe hai.
-    if request.method == "POST":
-        # Request ke POST data se mentor form bana rahe hai.
-        form = MentorForm(request.POST)
+# this is also not needed for now as signup form is not used and will be signup 
+# using SignupForm and LoginForm in the future in signup and login views respectively
 
-        # Invalid data ko database mein save nahi karna chahiye.
-        if form.is_valid():
-            form.save()
-            return HttpResponse("Mentor form is saved ab solve kariye")
+# @csrf_exempt
+# def create_student(request):
+#     # request ek HttpRequest object hai jisme method aur user ka data hota hai.
+#     if request.method == "POST":
+#         # POST body se student form bana rahe hai.
+#         # POST ka use database mein naya record create karne ke liye hota hai.
+#         form = SignupForm(request.POST)
 
-    else:
-        # GET request mein koi mentor data submit nahi hua.
-        form = MentorForm()
-        return HttpResponse("post was not there with the request")
+#         # Form ke fields aur model rules check kar rahe hai.
+#         if form.is_valid():
+#             # Valid form ko database mein save kar rahe hai.
+#             form.save()
 
-    # Invalid POST par None return hone se bachne ke liye response bhej rahe hai.
-    return HttpResponse(form.errors.as_text(), status=400)
+#             # Har Django view ko HttpResponse return karna zaroori hai.
+#             return HttpResponse("form is saved")
+
+#     else:
+#         # GET request mein user ne abhi data submit nahi kiya,
+#         # isliye empty form object bana rahe hai.
+#         form = SignupForm()
+
+#         # Is project mein abhi HTML form ki jagah simple text response bhej rahe hai.
+#         return HttpResponse("post was not there with the request")
+
+#     # Agar POST form invalid ho, toh pehle function None return kar raha tha.
+#     # Isi wajah se Django ka error aata hai:
+#     # "The view did not return an HttpResponse object. It returned None instead."
+#     # Form errors ko response mein dikha rahe hai.
+#     return HttpResponse(form.errors.as_text(), status=400)
+
+# not needed for now 
+# @csrf_exempt
+# def create_mentor(request):
+#     # Mentor create karne ke liye POST request check kar rahe hai.
+#     if request.method == "POST":
+#         # Request ke POST data se mentor form bana rahe hai.
+#         form = SignupForm(request.POST)
+
+#         # Invalid data ko database mein save nahi karna chahiye.
+#         if form.is_valid():
+#             form.save()
+#             return HttpResponse("Mentor form is saved ab solve kariye")
+
+#     else:
+#         # GET request mein koi mentor data submit nahi hua.
+#         form = SignupForm()
+#         return HttpResponse("post was not there with the request")
+
+#     # Invalid POST par None return hone se bachne ke liye response bhej rahe hai.
+#     return HttpResponse(form.errors.as_text(), status=400)
 
 
 
@@ -133,6 +138,9 @@ def mentor_change_status(request, sk, ck, status):
         list1 = list(complaints_show_pre)
 
         complaints = Complaint.objects.filter(id = ck, student_id = sk)
+        # status ko validate kar rahe hai ki yeh Complaint.Status ke valid values mein se hai ya nahi.
+        if status not in Complaint.Status.values:
+            return JsonResponse({"error": "Invalid status"}, status=400)
         complaints.update(status = status)
 
         complaints_show_post = Complaint.objects.filter(id = ck, student_id = sk).values(

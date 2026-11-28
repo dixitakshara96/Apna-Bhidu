@@ -3,7 +3,7 @@ from django.db import models
 
 class Students(models.Model):
     id = models.AutoField(primary_key=True)
-    stud_name = models.CharField(max_length=100)
+    stud_name = models.CharField(max_length=100, unique=True)
 
     # Student ka hashed password store hoga
     password = models.CharField(max_length = 128, null = True, blank = True)
@@ -11,7 +11,7 @@ class Students(models.Model):
 
 class Mentors(models.Model):
     mentor_id = models.AutoField(primary_key=True)
-    mentor_name = models.CharField(max_length=100)
+    mentor_name = models.CharField(max_length=100, unique=True)
 
     # Mentor ka hashed password store hoga
     password = models.CharField(max_length = 128, null = True, blank = True)

@@ -224,12 +224,13 @@ class LoginForm(forms.Form):
                 )
 
             # Entered plain password ko stored hashed password ke saath verify kar rahe hai.
-            if not check_password(
+            # Agar stored password empty hai ya match nahi hua, toh login reject.
+            if not stored_password or not check_password(
                 password,
                 stored_password
             ):
 
-                # Password match nahi hua toh form invalid kar rahe hai.
+            
                 raise forms.ValidationError(
                     "Invalid username or password."
                 )
